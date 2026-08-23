@@ -1,1 +1,83 @@
 <!-- sup player -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🌳 Career Tree</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo">🌳 Career Tree</div>
+
+        <!-- STACK SELECTION -->
+        <div class="stack-selector">
+            <label for="stackSelect">Stack / Profession</label>
+            <select id="stackSelect">
+                <option value="">-- Select a stack --</option>
+            </select>
+        </div>
+
+        <!-- NAVIGATION MENU -->
+        <nav class="nav-menu">
+            <div class="nav-group">
+                <div class="nav-group-title">Profile</div>
+                <button class="nav-item active" data-section="overview">
+                    <span class="icon">📊</span> Overview
+                </button>
+                <button class="nav-item" data-section="resume">
+                    <span class="icon">📄</span> Resume
+                </button>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-group-title">Learning</div>
+                <button class="nav-item" data-section="goals">
+                    <span class="icon">🎯</span> Goals
+                </button>
+                <button class="nav-item" data-section="roadmap">
+                    <span class="icon">🗺️</span> Roadmap
+                </button>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-group-title">Knowledge Base</div>
+                <button class="nav-item" data-section="faq">
+                    <span class="icon">❓</span> FAQ
+                </button>
+                <button class="nav-item" data-section="materials">
+                    <span class="icon">📚</span> Materials
+                </button>
+                <button class="nav-item" data-section="knowledge">
+                    <span class="icon">🧠</span> Knowledge Base
+                </button>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-group-title">Prompts</div>
+                <button class="nav-item" data-section="prompts">
+                    <span class="icon">⚡</span> Prompts
+                </button>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main" id="mainContent">
+        <!-- Content is rendered here -->
+    </main>
+
+    <script src="script.js"></script>
+    <!-- LOAD STACKS -->
+    <script src="skills/seo.js"></script>
+    <script src="skills/flutter.js"></script>
+    <script src="skills/english.js"></script>
+    <script src="skills/spanish.js"></script>
+    <script src="skills/php.js"></script>
+    <script src="skills/cms.js"></script>
+    <script src="skills/nextjs.js"></script>
+</body>
+</html>
