@@ -8,7 +8,17 @@ window.registerPhpLearning = function(d, level) {
                 'Условные конструкции, циклы (for, foreach, while)',
                 'Функции: объявление, параметры, return',
                 'Массивы: работа с индексированными и ассоциативными массивами',
-                'Суперглобальные массивы ($_GET, $_POST, $_SESSION)'
+                'Суперглобальные массивы ($_GET, $_POST, $_SESSION)',
+                '<strong>Эволюция версий PHP (от 5.6 до 8.3):</strong>',
+                '<div style="background:var(--bg-black50);padding:12px;border-radius:8px;margin:8px 0;font-size:13px;line-height:1.6;">' +
+                '<strong>PHP 5.6 → 7.0 (Эпоха скорости):</strong> Zend Engine III, скорость в 2-3 раза выше, скалярные типы (int, float, string, bool), типы возврата, операторы ?? и <=>, Throwable.<br><br>' +
+                '<strong>PHP 7.1 → 7.3 (Эра удобства):</strong> Nullable типы (?string), void, деструктуризация массивов, гибкий Heredoc.<br><br>' +
+                '<strong>PHP 7.4 (Мост к PHP 8):</strong> Стрелочные функции (fn), типизированные свойства, null coalescing assignment (??=), spread в массивах.<br><br>' +
+                '<strong>PHP 8.0 (Революция синтаксиса):</strong> JIT, Union Types (int|float), Named Arguments, Атрибуты (#[Route]), Match выражение, Nullsafe оператор (?->), Constructor Property Promotion.<br><br>' +
+                '<strong>PHP 8.1:</strong> Enums, Fibers, Readonly свойства, тип never, spread для строковых ключей.<br><br>' +
+                '<strong>PHP 8.2:</strong> Readonly классы, DNF Types ((A&B)|null), константы в трейтах.<br><br>' +
+                '<strong>PHP 8.3 (актуальный минимум):</strong> Типизированные константы класса (const string VERSION), json_validate(), атрибут #[Override].' +
+                '</div>'
             ],
             progress: 90
         },

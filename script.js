@@ -2,6 +2,7 @@ const STACKS = {};
 let currentStack = null;
 let currentSection = 'overview';
 let currentLearningLevel = 'base';
+let cardsViewMode = 'single'; // 'single' или 'all'
 
 window.registerStack = function(id, data) {
     STACKS[id] = data;
@@ -48,6 +49,8 @@ function switchSection(sectionId) {
         currentLearningLevel = sectionId.replace('learning-', '');
     }
 
+    // Сбрасываем режим просмотра карточек при переключении секции
+    cardsViewMode = 'single';
     renderContent();
 }
 
@@ -94,6 +97,11 @@ function renderContent() {
             }
         });
     }
+
+    // Если это раздел cards и режим all, показываем все карточки
+    if (currentSection === 'cards' && cardsViewMode === 'all') {
+        showAllCards();
+    }
 }
 
 function restoreCheckboxes() {
@@ -114,12 +122,133 @@ function bindFaqToggles() {
     });
 }
 
+function showAllCards() {
+    const cards = window._cardsData || [];
+    if (cards.length === 0) return;
+
+    const container = document.getElementById('card-container');
+    if (!container) return;
+
+    // Сохраняем текущее содержимое
+    const singleCardMode = container.querySelector('.card-box');
+    const nextBtn = document.getElementById('next-card-btn');
+    const showAllBtn = document.querySelector('.show-all-cards-btn');
+    const backBtn = document.querySelector('.back-to-cards-btn');
+
+    // Скрываем одиночный режим
+    if (singleCardMode) singleCardMode.style.display = 'none';
+    if (nextBtn) nextBtn.style.display = 'none';
+    if (showAllBtn) showAllBtn.style.display = 'none';
+
+    // Удаляем старую сетку если есть
+    const oldGrid = container.querySelector('.cards-grid-all');
+    if (oldGrid) oldGrid.remove();
+
+    // Создаем сетку со всеми карточками
+    const grid = document.createElement('div');
+    grid.className = 'cards-grid-all';
+    grid.style.cssText = `
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 16px;
+        margin: 20px 0;
+    `;
+
+    cards.forEach((card, index) => {
+        const cardEl = document.createElement('div');
+        cardEl.className = 'card-item-all';
+        cardEl.style.cssText = `
+            background: var(--bg-black100);
+            border: 1px solid var(--bg-black50);
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        `;
+        cardEl.innerHTML = `
+            <div style="font-weight:600;font-size:14px;color:var(--text-black900);margin-bottom:8px;">${card.question}</div>
+            <div style="font-size:13px;color:var(--text-black700);display:none;" class="card-answer-all">${card.answer}</div>
+            <div style="margin-top:8px;font-size:12px;color:var(--skin-color);cursor:pointer;">👆 Нажмите для ответа</div>
+        `;
+        
+        // Клик для показа/скрытия ответа
+        cardEl.addEventListener('click', function() {
+            const answer = this.querySelector('.card-answer-all');
+            const hint = this.querySelector('div:last-child');
+            if (answer.style.display === 'none' || answer.style.display === '') {
+                answer.style.display = 'block';
+                hint.textContent = '👆 Нажмите чтобы скрыть ответ';
+            } else {
+                answer.style.display = 'none';
+                hint.textContent = '👆 Нажмите для ответа';
+            }
+        });
+
+        cardEl.addEventListener('mouseenter', function() {
+            this.style.boxShadow = '0 4px 12px rgba(48, 46, 77, 0.1)';
+            this.style.transform = 'translateY(-2px)';
+        });
+        cardEl.addEventListener('mouseleave', function() {
+            this.style.boxShadow = 'none';
+            this.style.transform = 'translateY(0)';
+        });
+
+        grid.appendChild(cardEl);
+    });
+
+    container.appendChild(grid);
+
+    // Добавляем кнопку "Назад"
+    if (!backBtn) {
+        const backButton = document.createElement('button');
+        backButton.className = 'back-to-cards-btn';
+        backButton.textContent = '← Назад к карточкам';
+        backButton.style.cssText = `
+            padding: 10px 28px;
+            background: var(--bg-black100);
+            border: 1px solid var(--bg-black50);
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-black900);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 20px auto 0;
+        `;
+        backButton.addEventListener('mouseenter', function() {
+            this.style.borderColor = 'var(--skin-color)';
+            this.style.background = 'var(--skin-color)';
+            this.style.color = '#fff';
+        });
+        backButton.addEventListener('mouseleave', function() {
+            this.style.borderColor = 'var(--bg-black50)';
+            this.style.background = 'var(--bg-black100)';
+            this.style.color = 'var(--text-black900)';
+        });
+        backButton.addEventListener('click', function() {
+            cardsViewMode = 'single';
+            renderContent();
+        });
+        container.appendChild(backButton);
+    }
+
+    // Обновляем счетчик
+    const counter = document.querySelector('.cards-counter');
+    if (counter) {
+        counter.textContent = `Всего карточек: ${cards.length}`;
+    }
+}
+
 function bindCardButtons() {
     const revealBtn = document.querySelector('.card-reveal-btn');
     const nextBtn = document.getElementById('next-card-btn');
+    const showAllBtn = document.querySelector('.show-all-cards-btn');
     const cardAnswer = document.querySelector('.card-answer');
     const cardQuestion = document.querySelector('.card-question');
 
+    // Обработчик "Показать ответ"
     if (revealBtn) {
         revealBtn.addEventListener('click', function() {
             const answer = document.querySelector('.card-answer');
@@ -133,6 +262,7 @@ function bindCardButtons() {
         });
     }
 
+    // Обработчик "Следующая карточка"
     if (nextBtn) {
         nextBtn.addEventListener('click', function() {
             const cards = window._cardsData || [];
@@ -148,6 +278,14 @@ function bindCardButtons() {
                 answerEl.style.display = 'none';
             }
             if (revealBtnEl) revealBtnEl.textContent = 'Показать ответ';
+        });
+    }
+
+    // Обработчик "Показать все карточки"
+    if (showAllBtn) {
+        showAllBtn.addEventListener('click', function() {
+            cardsViewMode = 'all';
+            showAllCards();
         });
     }
 }

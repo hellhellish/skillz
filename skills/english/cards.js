@@ -18,6 +18,9 @@ window.registerEnglishCards = function(d) {
                 <p>Изучайте новые термины с помощью карточек</p>
             </div>
             <p class="cards-description">Нажмите "Показать ответ", чтобы проверить себя.</p>
+            <div class="cards-actions">
+                <button class="show-all-cards-btn">📚 Показать все карточки</button>
+            </div>
             <div id="card-container">
                 <div class="card-box">
                     <div class="card-question">${randomCard.question}</div>
@@ -26,6 +29,7 @@ window.registerEnglishCards = function(d) {
                 </div>
                 <button id="next-card-btn">Следующая карточка</button>
             </div>
+            <div class="cards-counter">Всего карточек: ${cards.length}</div>
         </div>
     `;
 };
