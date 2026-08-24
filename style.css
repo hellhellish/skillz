@@ -775,3 +775,310 @@ a[onclick*="switchSection"]:hover {
 .nav-toggler {
     display: none;
 }
+
+/* ===== LEARNING LEVELS ===== */
+.learning-levels {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.level-btn {
+    padding: 8px 20px;
+    border: 2px solid var(--bg-black50);
+    background: var(--bg-black100);
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-black700);
+    transition: all 0.3s ease;
+}
+
+.level-btn:hover {
+    border-color: var(--skin-color);
+    color: var(--text-black900);
+}
+
+.level-btn.active {
+    background: var(--skin-color);
+    border-color: var(--skin-color);
+    color: #fff;
+}
+
+.level-content {
+    display: none;
+    animation: slideSection 0.4s ease;
+}
+
+.level-content.active {
+    display: block;
+}
+
+.level-content h4 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-black900);
+    margin-bottom: 16px;
+}
+
+.level-content ul {
+    list-style: none;
+    padding: 0;
+}
+
+.level-content ul li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--bg-black50);
+    font-size: 14px;
+    color: var(--text-black700);
+}
+
+.level-content ul li:last-child {
+    border-bottom: none;
+}
+
+/* ===== CARDS ===== */
+.cards-description {
+    color: var(--text-black700);
+    margin-bottom: 24px;
+}
+
+#card-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.card-box {
+    background: var(--bg-black100);
+    border: 1px solid var(--bg-black50);
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.card-box:hover {
+    box-shadow: 0 0 30px rgba(48, 46, 77, 0.08);
+}
+
+.card-question {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-black900);
+    margin-bottom: 20px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-reveal-btn {
+    padding: 10px 28px;
+    background: var(--skin-color);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.card-reveal-btn:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 20px rgba(236, 24, 57, 0.3);
+}
+
+.card-answer {
+    display: none;
+    padding: 20px;
+    background: var(--bg-black50);
+    border-radius: 8px;
+    margin-top: 16px;
+    text-align: left;
+    font-size: 14px;
+    color: var(--text-black700);
+    line-height: 1.7;
+    animation: slideSection 0.3s ease;
+}
+
+#next-card-btn {
+    padding: 10px 28px;
+    background: var(--bg-black100);
+    border: 1px solid var(--bg-black50);
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-black900);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: block;
+    margin: 0 auto;
+}
+
+#next-card-btn:hover {
+    border-color: var(--skin-color);
+    background: var(--skin-color);
+    color: #fff;
+}
+
+/* ===== MATERIALS & KNOWLEDGE ===== */
+.materials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.material-category {
+    background: var(--bg-black100);
+    border: 1px solid var(--bg-black50);
+    border-radius: 10px;
+    padding: 20px 24px;
+    transition: all 0.3s ease;
+}
+
+.material-category:hover {
+    box-shadow: 0 0 20px rgba(48, 46, 77, 0.08);
+}
+
+.material-category h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-black900);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--bg-black50);
+}
+
+.material-category ul {
+    list-style: none;
+    padding: 0;
+}
+
+.material-category ul li {
+    padding: 6px 0;
+    font-size: 14px;
+    color: var(--text-black700);
+}
+
+.material-category ul li a {
+    color: var(--skin-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.material-category ul li a:hover {
+    text-decoration: underline;
+}
+
+/* ===== EXAM STYLES ===== */
+.exam-questions {
+    margin-top: 16px;
+}
+
+.exam-question {
+    margin-bottom: 24px;
+    padding: 16px 20px;
+    background: var(--bg-black50);
+    border-radius: 8px;
+}
+
+.exam-question p {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text-black900);
+    margin-bottom: 10px;
+}
+
+.exam-options {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.exam-options label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text-black700);
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+}
+
+.exam-options label:hover {
+    background: var(--bg-black100);
+}
+
+.exam-options input[type="radio"] {
+    accent-color: var(--skin-color);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.exam-submit-btn {
+    padding: 10px 30px;
+    background: var(--skin-color);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.exam-submit-btn:hover {
+    box-shadow: 0 0 20px rgba(236, 24, 57, 0.3);
+    transform: scale(1.02);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--bg-black50);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 12px 0;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+/* ===== RESPONSIVE FOR NEW ELEMENTS ===== */
+@media (max-width: 768px) {
+    .learning-levels {
+        justify-content: center;
+    }
+    
+    .level-btn {
+        padding: 6px 16px;
+        font-size: 13px;
+    }
+    
+    .card-box {
+        padding: 20px;
+    }
+    
+    .card-question {
+        font-size: 16px;
+        min-height: 50px;
+    }
+    
+    .materials-grid {
+        grid-template-columns: 1fr;
+    }
+}

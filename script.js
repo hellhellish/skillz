@@ -22,50 +22,51 @@ function switchStack(id) {
         localStorage.removeItem('ct_stack');
         return;
     }
-    
+
     currentStack = id;
     localStorage.setItem('ct_stack', id);
-    
+
     const data = STACKS[id];
     document.querySelector('.logo').textContent = data.meta.icon + ' ' + data.meta.title;
-    
+
     switchSection('overview');
 }
 
 function switchSection(sectionId) {
     if (!currentStack || !STACKS[currentStack]) return;
-    
+
     currentSection = sectionId;
     localStorage.setItem('ct_section', sectionId);
-    
+
     document.querySelectorAll('.nav-item').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.section === sectionId);
     });
-    
+
     renderContent();
 }
 
 function renderContent() {
     const container = document.getElementById('mainContent');
     const data = STACKS[currentStack];
-    
+
     const renderFn = data.sections[currentSection];
     if (!renderFn) {
         container.innerHTML = `<div class="section active"><p>Section in development</p></div>`;
         return;
     }
-    
+
     let html = renderFn(data);
-    
+
     if (data.footer && data.footer[currentSection]) {
         html += data.footer[currentSection](data);
     }
-    
+
     container.innerHTML = html;
-    
+
     restoreCheckboxes();
-    
     bindFaqToggles();
+    bindLevelButtons();
+    bindCardButtons();
 }
 
 function restoreCheckboxes() {
@@ -86,20 +87,72 @@ function bindFaqToggles() {
     });
 }
 
+function bindLevelButtons() {
+    document.querySelectorAll('.level-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const level = this.dataset.level;
+            document.querySelectorAll('.level-content').forEach(el => {
+                el.classList.remove('active');
+                if (el.dataset.level === level) {
+                    el.classList.add('active');
+                }
+            });
+        });
+    });
+}
+
+function bindCardButtons() {
+    const revealBtn = document.querySelector('.card-reveal-btn');
+    const nextBtn = document.getElementById('next-card-btn');
+    const cardAnswer = document.querySelector('.card-answer');
+    const cardQuestion = document.querySelector('.card-question');
+
+    if (revealBtn) {
+        revealBtn.addEventListener('click', function() {
+            const answer = document.querySelector('.card-answer');
+            if (answer.style.display === 'none' || answer.style.display === '') {
+                answer.style.display = 'block';
+                this.textContent = 'Скрыть ответ';
+            } else {
+                answer.style.display = 'none';
+                this.textContent = 'Показать ответ';
+            }
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+            const cards = window._cardsData || [];
+            if (cards.length === 0) return;
+            const randomIndex = Math.floor(Math.random() * cards.length);
+            const card = cards[randomIndex];
+            const questionEl = document.querySelector('.card-question');
+            const answerEl = document.querySelector('.card-answer');
+            const revealBtnEl = document.querySelector('.card-reveal-btn');
+            if (questionEl) questionEl.textContent = card.question;
+            if (answerEl) {
+                answerEl.textContent = card.answer;
+                answerEl.style.display = 'none';
+            }
+            if (revealBtnEl) revealBtnEl.textContent = 'Показать ответ';
+        });
+    }
+}
+
 document.addEventListener('keydown', (e) => {
     if (!e.ctrlKey) return;
-    
+
     const map = {
         '1': 'overview',
         '2': 'resume',
-        '3': 'goals',
-        '4': 'roadmap',
-        '5': 'faq',
-        '6': 'materials',
-        '7': 'knowledge',
-        '8': 'prompts'
+        '3': 'learning',
+        '4': 'cards',
+        '5': 'materials',
+        '6': 'prompts'
     };
-    
+
     if (map[e.key]) {
         e.preventDefault();
         switchSection(map[e.key]);
@@ -110,18 +163,18 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('stackSelect').addEventListener('change', function() {
         switchStack(this.value);
     });
-    
+
     document.querySelectorAll('.nav-item').forEach(btn => {
         btn.addEventListener('click', function() {
             switchSection(this.dataset.section);
         });
     });
-    
+
     const savedStack = localStorage.getItem('ct_stack');
     if (savedStack && STACKS[savedStack]) {
         document.getElementById('stackSelect').value = savedStack;
         switchStack(savedStack);
-        
+
         const savedSection = localStorage.getItem('ct_section');
         if (savedSection) {
             switchSection(savedSection);
@@ -137,7 +190,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
-
-console.log('🌳 Career Tree ready!');
-console.log('📦 Stacks loaded:', Object.keys(STACKS).length);
-console.log('⌨️ Ctrl+1..8 for navigation');
