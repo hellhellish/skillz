@@ -1,6 +1,7 @@
 const STACKS = {};
 let currentStack = null;
 let currentSection = 'overview';
+let currentLearningLevel = 'base';
 
 window.registerStack = function(id, data) {
     STACKS[id] = data;
@@ -42,6 +43,11 @@ function switchSection(sectionId) {
         btn.classList.toggle('active', btn.dataset.section === sectionId);
     });
 
+    // Если раздел начинается с "learning-", извлекаем уровень
+    if (sectionId.startsWith('learning-')) {
+        currentLearningLevel = sectionId.replace('learning-', '');
+    }
+
     renderContent();
 }
 
@@ -49,24 +55,45 @@ function renderContent() {
     const container = document.getElementById('mainContent');
     const data = STACKS[currentStack];
 
-    const renderFn = data.sections[currentSection];
+    // Определяем, какой раздел рендерить
+    let sectionToRender = currentSection;
+    let level = null;
+
+    // Если это один из новых learning-разделов, используем основной 'learning'
+    if (currentSection.startsWith('learning-')) {
+        sectionToRender = 'learning';
+        level = currentLearningLevel;
+    }
+
+    const renderFn = data.sections[sectionToRender];
     if (!renderFn) {
         container.innerHTML = `<div class="section active"><p>Section in development</p></div>`;
         return;
     }
 
-    let html = renderFn(data);
+    // Передаем уровень в функцию рендеринга, если он есть
+    let html = renderFn(data, level);
 
-    if (data.footer && data.footer[currentSection]) {
-        html += data.footer[currentSection](data);
+    if (data.footer && data.footer[sectionToRender]) {
+        html += data.footer[sectionToRender](data);
     }
 
     container.innerHTML = html;
 
     restoreCheckboxes();
     bindFaqToggles();
-    bindLevelButtons();
     bindCardButtons();
+
+    // Если это раздел learning, показываем только нужный уровень
+    if (currentSection.startsWith('learning-') && level) {
+        // Показываем только контент нужного уровня
+        document.querySelectorAll('.level-content').forEach(el => {
+            el.style.display = 'none';
+            if (el.dataset.level === level) {
+                el.style.display = 'block';
+            }
+        });
+    }
 }
 
 function restoreCheckboxes() {
@@ -83,22 +110,6 @@ function bindFaqToggles() {
     document.querySelectorAll('.faq-item').forEach(item => {
         item.addEventListener('click', function() {
             this.classList.toggle('open');
-        });
-    });
-}
-
-function bindLevelButtons() {
-    document.querySelectorAll('.level-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            const level = this.dataset.level;
-            document.querySelectorAll('.level-content').forEach(el => {
-                el.classList.remove('active');
-                if (el.dataset.level === level) {
-                    el.classList.add('active');
-                }
-            });
         });
     });
 }
@@ -147,7 +158,7 @@ document.addEventListener('keydown', (e) => {
     const map = {
         '1': 'overview',
         '2': 'resume',
-        '3': 'learning',
+        '3': 'learning-base',
         '4': 'cards',
         '5': 'materials',
         '6': 'prompts'

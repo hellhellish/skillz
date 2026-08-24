@@ -177,100 +177,127 @@ registerStack('php', {
             </div>
         `,
 
-        learning: (d) => `
-            <div class="section active">
-                <div class="section-header">
-                    <h1>📖 Learning</h1>
-                    <p>Уровни сложности</p>
-                </div>
-                <div class="learning-levels">
-                    <button class="level-btn active" data-level="base">Base</button>
-                    <button class="level-btn" data-level="light">Light</button>
-                    <button class="level-btn" data-level="medium">Medium</button>
-                    <button class="level-btn" data-level="hard">Hard</button>
-                    <button class="level-btn" data-level="exam">Exam</button>
-                </div>
-                <div class="level-content active" data-level="base">
-                    <h4>Base — Основы PHP</h4>
-                    <ul>
-                        <li>Синтаксис: переменные, типы, операторы</li>
-                        <li>Условные конструкции, циклы (for, foreach, while)</li>
-                        <li>Функции: объявление, параметры, return</li>
-                        <li>Массивы: работа с индексированными и ассоциативными массивами</li>
-                        <li>Суперглобальные массивы ($_GET, $_POST, $_SESSION)</li>
-                    </ul>
-                    <div class="progress-bar"><div class="progress-fill" style="width:90%;background:#3fb950"></div></div>
-                    <p style="font-size:14px;color:var(--text-black700)">Прогресс: 90%</p>
-                </div>
-                <div class="level-content" data-level="light">
-                    <h4>Light — Начальный</h4>
-                    <ul>
-                        <li>ООП: классы, объекты, наследование, инкапсуляция</li>
-                        <li>Исключения (try-catch-finally)</li>
-                        <li>Работа с файлами (fopen, fwrite, file_get_contents)</li>
-                        <li>Работа с базами данных через PDO и MySQLi</li>
-                        <li>Composer: установка и автозагрузка</li>
-                    </ul>
-                    <div class="progress-bar"><div class="progress-fill" style="width:85%;background:#3fb950"></div></div>
-                    <p style="font-size:14px;color:var(--text-black700)">Прогресс: 85%</p>
-                </div>
-                <div class="level-content" data-level="medium">
-                    <h4>Medium — Средний</h4>
-                    <ul>
-                        <li>Laravel: MVC, маршруты, контроллеры, Blade</li>
-                        <li>Eloquent ORM: модели, отношения, скоупы</li>
-                        <li>REST API: создание, версионирование, документация</li>
-                        <li>Middleware, события, очереди</li>
-                        <li>Тестирование (PHPUnit, Pest)</li>
-                    </ul>
-                    <div class="progress-bar"><div class="progress-fill" style="width:65%;background:#d2991d"></div></div>
-                    <p style="font-size:14px;color:var(--text-black700)">Прогресс: 65%</p>
-                </div>
-                <div class="level-content" data-level="hard">
-                    <h4>Hard — Продвинутый</h4>
-                    <ul>
-                        <li>Symfony: компоненты, сервисы, конфигурация</li>
-                        <li>Doctrine ORM: продвинутые запросы, события</li>
-                        <li>Архитектура: DDD, Clean Architecture, CQRS</li>
-                        <li>Микросервисы: RabbitMQ, Kafka, API Gateway</li>
-                        <li>Кеширование: Redis, Memcached</li>
-                    </ul>
-                    <div class="progress-bar"><div class="progress-fill" style="width:40%;background:#d2991d"></div></div>
-                    <p style="font-size:14px;color:var(--text-black700)">Прогресс: 40%</p>
-                </div>
-                <div class="level-content" data-level="exam">
-                    <h4>Exam — Экзамен</h4>
-                    <p>Проверьте свои знания PHP!</p>
-                    <div class="exam-questions">
-                        <div class="exam-question">
-                            <p>1. Какой метод используется для соединения с MySQL через PDO?</p>
-                            <div class="exam-options">
-                                <label><input type="radio" name="q1" value="a"> mysqli_connect()</label>
-                                <label><input type="radio" name="q1" value="b"> new PDO()</label>
-                                <label><input type="radio" name="q1" value="c"> mysql_connect()</label>
+        learning: (d, level) => {
+            const levelsData = {
+                base: {
+                    title: 'Base — Основы PHP',
+                    items: [
+                        'Синтаксис: переменные, типы, операторы',
+                        'Условные конструкции, циклы (for, foreach, while)',
+                        'Функции: объявление, параметры, return',
+                        'Массивы: работа с индексированными и ассоциативными массивами',
+                        'Суперглобальные массивы ($_GET, $_POST, $_SESSION)'
+                    ],
+                    progress: 90
+                },
+                light: {
+                    title: 'Light — Начальный',
+                    items: [
+                        'ООП: классы, объекты, наследование, инкапсуляция',
+                        'Исключения (try-catch-finally)',
+                        'Работа с файлами (fopen, fwrite, file_get_contents)',
+                        'Работа с базами данных через PDO и MySQLi',
+                        'Composer: установка и автозагрузка'
+                    ],
+                    progress: 85
+                },
+                medium: {
+                    title: 'Medium — Средний',
+                    items: [
+                        'Laravel: MVC, маршруты, контроллеры, Blade',
+                        'Eloquent ORM: модели, отношения, скоупы',
+                        'REST API: создание, версионирование, документация',
+                        'Middleware, события, очереди',
+                        'Тестирование (PHPUnit, Pest)'
+                    ],
+                    progress: 65
+                },
+                hard: {
+                    title: 'Hard — Продвинутый',
+                    items: [
+                        'Symfony: компоненты, сервисы, конфигурация',
+                        'Doctrine ORM: продвинутые запросы, события',
+                        'Архитектура: DDD, Clean Architecture, CQRS',
+                        'Микросервисы: RabbitMQ, Kafka, API Gateway',
+                        'Кеширование: Redis, Memcached'
+                    ],
+                    progress: 40
+                },
+                exam: {
+                    title: 'Exam — Экзамен',
+                    items: [],
+                    progress: 0,
+                    isExam: true
+                }
+            };
+
+            const activeLevel = level || 'base';
+            const levelData = levelsData[activeLevel];
+
+            let levelsHtml = '';
+
+            for (const [key, data] of Object.entries(levelsData)) {
+                const isActive = (key === activeLevel);
+                const contentClass = `level-content ${isActive ? 'active' : ''}`;
+                
+                let itemsHtml = data.items.map(item => `<li>${item}</li>`).join('');
+                let progressHtml = '';
+
+                if (data.isExam) {
+                    itemsHtml = `
+                        <div class="exam-questions">
+                            <div class="exam-question">
+                                <p>1. Какой метод используется для соединения с MySQL через PDO?</p>
+                                <div class="exam-options">
+                                    <label><input type="radio" name="q1" value="a"> mysqli_connect()</label>
+                                    <label><input type="radio" name="q1" value="b"> new PDO()</label>
+                                    <label><input type="radio" name="q1" value="c"> mysql_connect()</label>
+                                </div>
                             </div>
-                        </div>
-                        <div class="exam-question">
-                            <p>2. Что делает метод __construct() в классе?</p>
-                            <div class="exam-options">
-                                <label><input type="radio" name="q2" value="a"> Вызывается автоматически при создании объекта</label>
-                                <label><input type="radio" name="q2" value="b"> Уничтожает объект</label>
-                                <label><input type="radio" name="q2" value="c"> Клонирует объект</label>
+                            <div class="exam-question">
+                                <p>2. Что делает метод __construct() в классе?</p>
+                                <div class="exam-options">
+                                    <label><input type="radio" name="q2" value="a"> Вызывается автоматически при создании объекта</label>
+                                    <label><input type="radio" name="q2" value="b"> Уничтожает объект</label>
+                                    <label><input type="radio" name="q2" value="c"> Клонирует объект</label>
+                                </div>
                             </div>
-                        </div>
-                        <div class="exam-question">
-                            <p>3. Какой паттерн используется в Laravel для работы с базой данных?</p>
-                            <div class="exam-options">
-                                <label><input type="radio" name="q3" value="a"> Active Record</label>
-                                <label><input type="radio" name="q3" value="b"> Data Mapper</label>
-                                <label><input type="radio" name="q3" value="c"> Repository</label>
+                            <div class="exam-question">
+                                <p>3. Какой паттерн используется в Laravel для работы с базой данных?</p>
+                                <div class="exam-options">
+                                    <label><input type="radio" name="q3" value="a"> Active Record</label>
+                                    <label><input type="radio" name="q3" value="b"> Data Mapper</label>
+                                    <label><input type="radio" name="q3" value="c"> Repository</label>
+                                </div>
                             </div>
+                            <button class="exam-submit-btn">Проверить ответы</button>
                         </div>
-                        <button class="exam-submit-btn">Проверить ответы</button>
+                    `;
+                } else {
+                    progressHtml = `
+                        <div class="progress-bar"><div class="progress-fill" style="width:${data.progress}%;background:#3fb950"></div></div>
+                        <p style="font-size:14px;color:var(--text-black700)">Прогресс: ${data.progress}%</p>
+                    `;
+                }
+
+                levelsHtml += `
+                    <div class="${contentClass}" data-level="${key}">
+                        <h4>${data.title}</h4>
+                        <ul>${itemsHtml}</ul>
+                        ${progressHtml}
                     </div>
+                `;
+            }
+
+            return `
+                <div class="section active">
+                    <div class="section-header">
+                        <h1>📖 Learning — ${d.meta.title}</h1>
+                    </div>
+                    ${levelsHtml}
                 </div>
-            </div>
-        `,
+            `;
+        },
 
         cards: (d) => {
             const cards = [

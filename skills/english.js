@@ -171,100 +171,127 @@ registerStack('english', {
             </div>
         `,
 
-        learning: (d) => `
-            <div class="section active">
-                <div class="section-header">
-                    <h1>📖 Learning</h1>
-                    <p>Уровни сложности</p>
-                </div>
-                <div class="learning-levels">
-                    <button class="level-btn active" data-level="base">Base</button>
-                    <button class="level-btn" data-level="light">Light</button>
-                    <button class="level-btn" data-level="medium">Medium</button>
-                    <button class="level-btn" data-level="hard">Hard</button>
-                    <button class="level-btn" data-level="exam">Exam</button>
-                </div>
-                <div class="level-content active" data-level="base">
-                    <h4>Base — Основы</h4>
-                    <ul>
-                        <li>Алфавит, произношение, базовые звуки</li>
-                        <li>To be, to have, to do — базовые глаголы</li>
-                        <li>Present Simple vs Present Continuous</li>
-                        <li>Базовые предлоги (in, on, at, to, for)</li>
-                        <li>Числительные, время, дни недели, месяцы</li>
-                    </ul>
-                    <div class="progress-bar"><div class="progress-fill" style="width:80%;background:#3fb950"></div></div>
-                    <p style="font-size:14px;color:var(--text-black700)">Прогресс: 80%</p>
-                </div>
-                <div class="level-content" data-level="light">
-                    <h4>Light — Начальный</h4>
-                    <ul>
-                        <li>Past Simple, Past Continuous</li>
-                        <li>Будущее время: will vs going to</li>
-                        <li>Модальные глаголы (can, could, must, should)</li>
-                        <li>Степени сравнения прилагательных</li>
-                        <li>Базовые фразовые глаголы (get up, turn on, etc.)</li>
-                    </ul>
-                    <div class="progress-bar"><div class="progress-fill" style="width:60%;background:#d2991d"></div></div>
-                    <p style="font-size:14px;color:var(--text-black700)">Прогресс: 60%</p>
-                </div>
-                <div class="level-content" data-level="medium">
-                    <h4>Medium — Средний</h4>
-                    <ul>
-                        <li>Present Perfect vs Past Simple</li>
-                        <li>Условные предложения (0,1,2 типы)</li>
-                        <li>Passive Voice (страдательный залог)</li>
-                        <li>Reported Speech (косвенная речь)</li>
-                        <li>Техническая лексика: разработка, IT-термины</li>
-                    </ul>
-                    <div class="progress-bar"><div class="progress-fill" style="width:40%;background:#d2991d"></div></div>
-                    <p style="font-size:14px;color:var(--text-black700)">Прогресс: 40%</p>
-                </div>
-                <div class="level-content" data-level="hard">
-                    <h4>Hard — Продвинутый</h4>
-                    <ul>
-                        <li>Past Perfect, Future Perfect</li>
-                        <li>Условные 3-го типа (Mixed Conditionals)</li>
-                        <li>Inversion (инверсия) и cleft sentences</li>
-                        <li>Идиомы и продвинутая лексика для бизнеса</li>
-                        <li>Акцент, интонация, связная речь</li>
-                    </ul>
-                    <div class="progress-bar"><div class="progress-fill" style="width:20%;background:#f85149"></div></div>
-                    <p style="font-size:14px;color:var(--text-black700)">Прогресс: 20%</p>
-                </div>
-                <div class="level-content" data-level="exam">
-                    <h4>Exam — Экзамен</h4>
-                    <p>Проверьте свои знания!</p>
-                    <div class="exam-questions">
-                        <div class="exam-question">
-                            <p>1. Выберите правильную форму: "I ___ to the store yesterday."</p>
-                            <div class="exam-options">
-                                <label><input type="radio" name="q1" value="a"> go</label>
-                                <label><input type="radio" name="q1" value="b"> went</label>
-                                <label><input type="radio" name="q1" value="c"> have gone</label>
+        learning: (d, level) => {
+            const levelsData = {
+                base: {
+                    title: 'Base — Основы',
+                    items: [
+                        'Алфавит, произношение, базовые звуки',
+                        'To be, to have, to do — базовые глаголы',
+                        'Present Simple vs Present Continuous',
+                        'Базовые предлоги (in, on, at, to, for)',
+                        'Числительные, время, дни недели, месяцы'
+                    ],
+                    progress: 80
+                },
+                light: {
+                    title: 'Light — Начальный',
+                    items: [
+                        'Past Simple, Past Continuous',
+                        'Будущее время: will vs going to',
+                        'Модальные глаголы (can, could, must, should)',
+                        'Степени сравнения прилагательных',
+                        'Базовые фразовые глаголы (get up, turn on, etc.)'
+                    ],
+                    progress: 60
+                },
+                medium: {
+                    title: 'Medium — Средний',
+                    items: [
+                        'Present Perfect vs Past Simple',
+                        'Условные предложения (0,1,2 типы)',
+                        'Passive Voice (страдательный залог)',
+                        'Reported Speech (косвенная речь)',
+                        'Техническая лексика: разработка, IT-термины'
+                    ],
+                    progress: 40
+                },
+                hard: {
+                    title: 'Hard — Продвинутый',
+                    items: [
+                        'Past Perfect, Future Perfect',
+                        'Условные 3-го типа (Mixed Conditionals)',
+                        'Inversion (инверсия) и cleft sentences',
+                        'Идиомы и продвинутая лексика для бизнеса',
+                        'Акцент, интонация, связная речь'
+                    ],
+                    progress: 20
+                },
+                exam: {
+                    title: 'Exam — Экзамен',
+                    items: [],
+                    progress: 0,
+                    isExam: true
+                }
+            };
+
+            const activeLevel = level || 'base';
+            const levelData = levelsData[activeLevel];
+
+            let levelsHtml = '';
+
+            for (const [key, data] of Object.entries(levelsData)) {
+                const isActive = (key === activeLevel);
+                const contentClass = `level-content ${isActive ? 'active' : ''}`;
+                
+                let itemsHtml = data.items.map(item => `<li>${item}</li>`).join('');
+                let progressHtml = '';
+
+                if (data.isExam) {
+                    itemsHtml = `
+                        <div class="exam-questions">
+                            <div class="exam-question">
+                                <p>1. Выберите правильную форму: "I ___ to the store yesterday."</p>
+                                <div class="exam-options">
+                                    <label><input type="radio" name="q1" value="a"> go</label>
+                                    <label><input type="radio" name="q1" value="b"> went</label>
+                                    <label><input type="radio" name="q1" value="c"> have gone</label>
+                                </div>
                             </div>
-                        </div>
-                        <div class="exam-question">
-                            <p>2. "If I ___ you, I would study more." — правильный вариант:</p>
-                            <div class="exam-options">
-                                <label><input type="radio" name="q2" value="a"> was</label>
-                                <label><input type="radio" name="q2" value="b"> were</label>
-                                <label><input type="radio" name="q2" value="c"> had been</label>
+                            <div class="exam-question">
+                                <p>2. "If I ___ you, I would study more." — правильный вариант:</p>
+                                <div class="exam-options">
+                                    <label><input type="radio" name="q2" value="a"> was</label>
+                                    <label><input type="radio" name="q2" value="b"> were</label>
+                                    <label><input type="radio" name="q2" value="c"> had been</label>
+                                </div>
                             </div>
-                        </div>
-                        <div class="exam-question">
-                            <p>3. "She said she ___ the report by Friday."</p>
-                            <div class="exam-options">
-                                <label><input type="radio" name="q3" value="a"> will finish</label>
-                                <label><input type="radio" name="q3" value="b"> would finish</label>
-                                <label><input type="radio" name="q3" value="c"> finished</label>
+                            <div class="exam-question">
+                                <p>3. "She said she ___ the report by Friday."</p>
+                                <div class="exam-options">
+                                    <label><input type="radio" name="q3" value="a"> will finish</label>
+                                    <label><input type="radio" name="q3" value="b"> would finish</label>
+                                    <label><input type="radio" name="q3" value="c"> finished</label>
+                                </div>
                             </div>
+                            <button class="exam-submit-btn">Проверить ответы</button>
                         </div>
-                        <button class="exam-submit-btn">Проверить ответы</button>
+                    `;
+                } else {
+                    progressHtml = `
+                        <div class="progress-bar"><div class="progress-fill" style="width:${data.progress}%;background:#3fb950"></div></div>
+                        <p style="font-size:14px;color:var(--text-black700)">Прогресс: ${data.progress}%</p>
+                    `;
+                }
+
+                levelsHtml += `
+                    <div class="${contentClass}" data-level="${key}">
+                        <h4>${data.title}</h4>
+                        <ul>${itemsHtml}</ul>
+                        ${progressHtml}
                     </div>
+                `;
+            }
+
+            return `
+                <div class="section active">
+                    <div class="section-header">
+                        <h1>📖 Learning — ${d.meta.title}</h1>
+                    </div>
+                    ${levelsHtml}
                 </div>
-            </div>
-        `,
+            `;
+        },
 
         cards: (d) => {
             const cards = [

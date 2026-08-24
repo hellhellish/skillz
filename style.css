@@ -599,215 +599,7 @@ a[onclick*="switchSection"]:hover {
     text-decoration: underline;
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 1199px) {
-    .sidebar {
-        width: 270px;
-        min-width: 270px;
-        position: fixed;
-        left: -270px;
-        top: 0;
-        z-index: 10;
-        height: 100%;
-        background: var(--bg-black100);
-        border-right: 1px solid var(--bg-black50);
-        padding: 30px;
-    }
-
-    .sidebar.open {
-        left: 0;
-    }
-
-    .main {
-        max-width: 100%;
-        padding: 0 20px;
-    }
-
-    .section {
-        padding-top: 80px;
-    }
-
-    /* Mobile menu toggle button */
-    .nav-toggler {
-        display: flex !important;
-        height: 40px;
-        width: 45px;
-        border: 1px solid var(--bg-black50);
-        cursor: pointer;
-        position: fixed;
-        left: 20px;
-        top: 20px;
-        border-radius: 5px;
-        background: var(--bg-black100);
-        align-items: center;
-        justify-content: center;
-        z-index: 11;
-        transition: all .3s ease;
-    }
-
-    .nav-toggler.open {
-        left: 290px;
-    }
-
-    .nav-toggler span {
-        height: 2px;
-        width: 18px;
-        background: var(--skin-color);
-        display: inline-block;
-        position: relative;
-    }
-
-    .nav-toggler span::before {
-        content: '';
-        height: 2px;
-        width: 18px;
-        background: var(--skin-color);
-        position: absolute;
-        top: -6px;
-        left: 0;
-    }
-
-    .nav-toggler.open span::before {
-        transform: rotate(45deg);
-        top: 0;
-    }
-
-    .nav-toggler span::after {
-        content: '';
-        height: 2px;
-        width: 18px;
-        background: var(--skin-color);
-        position: absolute;
-        top: 6px;
-        left: 0;
-    }
-
-    .nav-toggler.open span::after {
-        transform: rotate(-45deg);
-        top: 0;
-    }
-
-    .nav-toggler.open span {
-        background-color: transparent;
-    }
-}
-
-@media (max-width: 991px) {
-    .stats-row {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .card-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .section-header h1 {
-        font-size: 32px;
-    }
-}
-
-@media (max-width: 768px) {
-    .sidebar {
-        padding: 20px;
-    }
-
-    .main {
-        padding: 0 15px;
-    }
-
-    .section {
-        padding: 70px 0 40px;
-    }
-
-    .stats-row {
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-    }
-
-    .stat-card {
-        padding: 14px;
-    }
-
-    .stat-value {
-        font-size: 24px;
-    }
-
-    .card {
-        padding: 18px 20px;
-    }
-
-    .section-header h1 {
-        font-size: 28px;
-    }
-}
-
-@media (max-width: 460px) {
-    .stats-row {
-        grid-template-columns: 1fr;
-    }
-
-    .section-header h1 {
-        font-size: 24px;
-    }
-
-    .logo {
-        font-size: 24px;
-        padding: 10px 15px;
-    }
-
-    .logo span {
-        font-size: 32px;
-    }
-
-    .nav-item {
-        font-size: 13px;
-        padding: 8px 12px;
-    }
-
-    .profile-header .avatar {
-        width: 60px;
-        height: 60px;
-        font-size: 28px;
-    }
-}
-
-/* ===== NAV TOGGLER (hidden by default, shown on mobile via media query) ===== */
-.nav-toggler {
-    display: none;
-}
-
-/* ===== LEARNING LEVELS ===== */
-.learning-levels {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 24px;
-}
-
-.level-btn {
-    padding: 8px 20px;
-    border: 2px solid var(--bg-black50);
-    background: var(--bg-black100);
-    border-radius: 25px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    font-family: 'Poppins', sans-serif;
-    color: var(--text-black700);
-    transition: all 0.3s ease;
-}
-
-.level-btn:hover {
-    border-color: var(--skin-color);
-    color: var(--text-black900);
-}
-
-.level-btn.active {
-    background: var(--skin-color);
-    border-color: var(--skin-color);
-    color: #fff;
-}
-
+/* ===== LEARNING CONTENT ===== */
 .level-content {
     display: none;
     animation: slideSection 0.4s ease;
@@ -1058,27 +850,177 @@ a[onclick*="switchSection"]:hover {
     transition: width 0.5s ease;
 }
 
-/* ===== RESPONSIVE FOR NEW ELEMENTS ===== */
-@media (max-width: 768px) {
-    .learning-levels {
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1199px) {
+    .sidebar {
+        width: 270px;
+        min-width: 270px;
+        position: fixed;
+        left: -270px;
+        top: 0;
+        z-index: 10;
+        height: 100%;
+        background: var(--bg-black100);
+        border-right: 1px solid var(--bg-black50);
+        padding: 30px;
+    }
+
+    .sidebar.open {
+        left: 0;
+    }
+
+    .main {
+        max-width: 100%;
+        padding: 0 20px;
+    }
+
+    .section {
+        padding-top: 80px;
+    }
+
+    .nav-toggler {
+        display: flex !important;
+        height: 40px;
+        width: 45px;
+        border: 1px solid var(--bg-black50);
+        cursor: pointer;
+        position: fixed;
+        left: 20px;
+        top: 20px;
+        border-radius: 5px;
+        background: var(--bg-black100);
+        align-items: center;
         justify-content: center;
+        z-index: 11;
+        transition: all .3s ease;
     }
-    
-    .level-btn {
-        padding: 6px 16px;
-        font-size: 13px;
+
+    .nav-toggler.open {
+        left: 290px;
     }
-    
-    .card-box {
-        padding: 20px;
+
+    .nav-toggler span {
+        height: 2px;
+        width: 18px;
+        background: var(--skin-color);
+        display: inline-block;
+        position: relative;
     }
-    
-    .card-question {
-        font-size: 16px;
-        min-height: 50px;
+
+    .nav-toggler span::before {
+        content: '';
+        height: 2px;
+        width: 18px;
+        background: var(--skin-color);
+        position: absolute;
+        top: -6px;
+        left: 0;
     }
-    
-    .materials-grid {
+
+    .nav-toggler.open span::before {
+        transform: rotate(45deg);
+        top: 0;
+    }
+
+    .nav-toggler span::after {
+        content: '';
+        height: 2px;
+        width: 18px;
+        background: var(--skin-color);
+        position: absolute;
+        top: 6px;
+        left: 0;
+    }
+
+    .nav-toggler.open span::after {
+        transform: rotate(-45deg);
+        top: 0;
+    }
+
+    .nav-toggler.open span {
+        background-color: transparent;
+    }
+}
+
+@media (max-width: 991px) {
+    .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .card-grid {
         grid-template-columns: 1fr;
     }
+
+    .section-header h1 {
+        font-size: 32px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        padding: 20px;
+    }
+
+    .main {
+        padding: 0 15px;
+    }
+
+    .section {
+        padding: 70px 0 40px;
+    }
+
+    .stats-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .stat-card {
+        padding: 14px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+    }
+
+    .card {
+        padding: 18px 20px;
+    }
+
+    .section-header h1 {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 460px) {
+    .stats-row {
+        grid-template-columns: 1fr;
+    }
+
+    .section-header h1 {
+        font-size: 24px;
+    }
+
+    .logo {
+        font-size: 24px;
+        padding: 10px 15px;
+    }
+
+    .logo span {
+        font-size: 32px;
+    }
+
+    .nav-item {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+
+    .profile-header .avatar {
+        width: 60px;
+        height: 60px;
+        font-size: 28px;
+    }
+}
+
+.nav-toggler {
+    display: none;
 }
