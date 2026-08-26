@@ -62,7 +62,6 @@ window.registerPhpPrompts = function(d) {
         <div class="section active">
             <div class="section-header">
                 <h1>⚡ Промпты</h1>
-                <p>Промпты для кодинга и изучения PHP</p>
             </div>
             <div class="prompts-grid">
                 ${promptsHtml}

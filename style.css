@@ -62,7 +62,7 @@ body {
 
 /* LOGO */
 .logo {
-    font-size: 30px;
+    font-size: 25px;
     font-weight: 700;
     text-transform: capitalize;
     color: var(--text-black900);
@@ -202,7 +202,7 @@ body {
 
 .section {
     display: none;
-    padding: 60px 0 70px;
+    padding: 30px 0;
     animation: slideSection 0.5s ease;
 }
 
@@ -227,7 +227,7 @@ body {
 }
 
 .section-header h1 {
-    font-size: 40px;
+    font-size: 25px;
     font-weight: 700;
     color: var(--text-black900);
     position: relative;
@@ -952,7 +952,7 @@ a[onclick*="switchSection"]:hover {
     }
 
     .section-header h1 {
-        font-size: 32px;
+        font-size: 22px;
     }
 }
 
@@ -987,7 +987,7 @@ a[onclick*="switchSection"]:hover {
     }
 
     .section-header h1 {
-        font-size: 28px;
+        font-size: 18px;
     }
 }
 
@@ -997,16 +997,16 @@ a[onclick*="switchSection"]:hover {
     }
 
     .section-header h1 {
-        font-size: 24px;
+        font-size: 16px;
     }
 
     .logo {
-        font-size: 24px;
+        font-size: 22px;
         padding: 10px 15px;
     }
 
     .logo span {
-        font-size: 32px;
+        font-size: 20px;
     }
 
     .nav-item {

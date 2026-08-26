@@ -61,7 +61,6 @@ window.registerEnglishPrompts = function(d) {
         <div class="section active">
             <div class="section-header">
                 <h1>⚡ Промпты для изучения языка</h1>
-                <p>Промпты для практики английского</p>
             </div>
             <div class="prompts-grid">
                 ${promptsHtml}
