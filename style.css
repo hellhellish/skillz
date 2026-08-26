@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Clicker+Script&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 :root {
     --bg-black900: #F2F2FC;
@@ -37,7 +38,6 @@ ul {
 body {
     line-height: 1.5;
     font-size: 16px;
-    font-family: 'Poppins', sans-serif;
     background: var(--bg-black900);
     color: var(--text-black900);
     display: flex;
@@ -125,7 +125,6 @@ body {
     border-radius: 8px;
     color: var(--text-black900);
     font-size: 14px;
-    font-family: 'Poppins', sans-serif;
     cursor: pointer;
     transition: all .3s ease;
     outline: none;
@@ -167,7 +166,6 @@ body {
     color: var(--text-black700);
     font-size: 14px;
     font-weight: 500;
-    font-family: 'Poppins', sans-serif;
     transition: all .3s ease;
     width: 100%;
     text-align: left;
@@ -577,7 +575,6 @@ body {
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
-    font-family: 'Poppins', sans-serif;
     transition: all .3s ease;
 }
 
@@ -676,7 +673,6 @@ a[onclick*="switchSection"]:hover {
     border-radius: 25px;
     font-size: 14px;
     font-weight: 600;
-    font-family: 'Poppins', sans-serif;
     cursor: pointer;
     transition: all 0.3s ease;
 }
@@ -706,7 +702,6 @@ a[onclick*="switchSection"]:hover {
     border-radius: 25px;
     font-size: 14px;
     font-weight: 500;
-    font-family: 'Poppins', sans-serif;
     color: var(--text-black900);
     cursor: pointer;
     transition: all 0.3s ease;
@@ -825,7 +820,6 @@ a[onclick*="switchSection"]:hover {
     border-radius: 25px;
     font-size: 14px;
     font-weight: 600;
-    font-family: 'Poppins', sans-serif;
     cursor: pointer;
     transition: all 0.3s ease;
 }
@@ -1087,7 +1081,6 @@ a[onclick*="switchSection"]:hover {
     border-radius: 25px;
     font-size: 14px;
     font-weight: 500;
-    font-family: 'Poppins', sans-serif;
     color: var(--text-black900);
     cursor: pointer;
     transition: all 0.3s ease;
@@ -1295,4 +1288,73 @@ a[onclick*="switchSection"]:hover {
     .prompt-title {
         font-size: 16px;
     }
+}
+
+        /* ---- дополнительный CSS для шестерёнки ---- */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--bg-black100);
+            border: 1px solid var(--bg-black50);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            transition: all 0.3s ease;
+            z-index: 999;
+            color: var(--text-black900);
+            user-select: none;
+        }
+        .theme-toggle:hover {
+            transform: rotate(60deg) scale(1.08);
+            border-color: var(--skin-color);
+            box-shadow: 0 0 20px rgba(236, 24, 57, 0.15);
+        }
+        .theme-toggle svg {
+            width: 26px;
+            height: 26px;
+            fill: currentColor;
+            transition: transform 0.6s ease;
+        }
+        .theme-toggle:hover svg {
+            transform: rotate(60deg);
+        }
+        body.dark .theme-toggle {
+            background: var(--bg-black100);
+            border-color: var(--bg-black50);
+        }
+        @media (max-width: 768px) {
+            .theme-toggle {
+                top: 12px;
+                right: 12px;
+                width: 42px;
+                height: 42px;
+            }
+            .theme-toggle svg {
+                width: 22px;
+                height: 22px;
+            }
+        }
+        @media (max-width: 1199px) {
+            .theme-toggle {
+                top: 12px;
+                right: 12px;
+            }
+        }
+
+/* ===== SETTINGS ===== */
+.font-option:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(48, 46, 77, 0.1);
+}
+
+.font-option.active {
+    border-color: var(--skin-color) !important;
+    background: var(--bg-black50) !important;
 }
