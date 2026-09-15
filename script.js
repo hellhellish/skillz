@@ -1,9 +1,14 @@
+// script.js
+
 const STACKS = {};
 let currentStack = null;
 let currentSection = 'overview';
 let currentLearningLevel = 'base';
 let cardsViewMode = 'single';
 
+// =============================================
+// STACK REGISTRATION
+// =============================================
 window.registerStack = function(id, data) {
     STACKS[id] = data;
     const select = document.getElementById('stackSelect');
@@ -11,8 +16,16 @@ window.registerStack = function(id, data) {
     option.value = id;
     option.textContent = data.meta.icon + ' ' + data.meta.title;
     select.appendChild(option);
+
+    if (Object.keys(STACKS).length === 1) {
+        select.value = id;
+        switchStack(id);
+    }
 };
 
+// =============================================
+// STACK SWITCHING
+// =============================================
 function switchStack(id) {
     if (!id || !STACKS[id]) {
         document.getElementById('mainContent').innerHTML = `
@@ -21,52 +34,54 @@ function switchStack(id) {
             </div>
         `;
         currentStack = null;
-        localStorage.removeItem('ct_stack');
+        removeStack();
         return;
     }
 
     currentStack = id;
-    localStorage.setItem('ct_stack', id);
-
-    const data = STACKS[id];
-    document.querySelector('.logo').textContent = data.meta.icon + ' ' + data.meta.title;
-
-    const savedSection = localStorage.getItem('ct_section') || 'overview';
-    switchSection(savedSection);
+    saveStack(id);
+    
+    const savedSection = getStoredSection();
+    switchSection(savedSection || 'overview');
 }
 
+// =============================================
+// SECTION SWITCHING
+// =============================================
 function switchSection(sectionId) {
-    if (!currentStack || !STACKS[currentStack]) {
-        if (sectionId === 'settings') {
-            currentSection = sectionId;
-            localStorage.setItem('ct_section', sectionId);
-            renderContent();
-            return;
-        }
+    if (!currentStack && sectionId !== 'settings') {
         return;
     }
 
     currentSection = sectionId;
-    localStorage.setItem('ct_section', sectionId);
+    saveSection(sectionId);
 
     document.querySelectorAll('.nav-item').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.section === sectionId);
     });
 
-    if (sectionId.startsWith('learning-')) {
+    // if it's a learning section - save the level and reset thread
+    if (sectionId && sectionId.startsWith('learning-')) {
         currentLearningLevel = sectionId.replace('learning-', '');
+        // Сбрасываем выбранный тред при переходе на уровень
+        if (typeof setLearningState === 'function') {
+            setLearningState(currentLearningLevel, { threadId: null });
+        }
     }
 
     cardsViewMode = 'single';
     renderContent();
 }
 
+// =============================================
+// CONTENT RENDERING
+// =============================================
 function renderContent() {
     const container = document.getElementById('mainContent');
 
+    // settings
     if (currentSection === 'settings') {
         container.innerHTML = renderSettings();
-        applyThemeFromStorage();
         applyFontFromStorage();
         bindSettingsEvents();
         return;
@@ -83,318 +98,188 @@ function renderContent() {
     }
 
     const data = STACKS[currentStack];
-    let sectionToRender = currentSection;
-    let level = null;
-
-    if (currentSection.startsWith('learning-')) {
-        sectionToRender = 'learning';
-        level = currentLearningLevel;
+    
+    // check if it's a learning section
+    if (currentSection && currentSection.startsWith('learning-')) {
+        const levelKey = currentSection; // 'learning-base', 'learning-light', etc.
+        const renderFn = data.sections[levelKey];
+        
+        if (typeof renderFn === 'function') {
+            // pass the level (base, light, etc.)
+            const level = currentLearningLevel;
+            container.innerHTML = renderFn(data, level);
+            
+            // Для learning-секций — только восстановление чекбоксов и toggle
+            restoreLearningCheckboxes();
+            bindLearningToggles();
+            bindLearningThreadCards();
+        } else {
+            container.innerHTML = `<div class="section active"><p>Learning section "${levelKey}" not found</p></div>`;
+        }
+        return;
     }
 
-    const renderFn = data.sections[sectionToRender];
+    // regular sections (overview, resume, cards, materials, prompts)
+// resume — статичная секция, не зависит от стека
+if (currentSection === 'resume') {
+    if (typeof window.renderResume === 'function') {
+        container.innerHTML = window.renderResume();
+    } else {
+        container.innerHTML = `<div class="section active"><p>Resume not loaded</p></div>`;
+    }
+    restoreCheckboxes();
+    bindFaqToggles();
+    return;
+}
+
+// regular sections (overview, cards, materials, prompts)
+const renderFn = data.sections[currentSection];
     if (!renderFn) {
         container.innerHTML = `<div class="section active"><p>Section in development</p></div>`;
         return;
     }
 
-    let html = renderFn(data, level);
-
-    if (data.footer && data.footer[sectionToRender]) {
-        html += data.footer[sectionToRender](data);
-    }
-
+    let html = renderFn(data);
     container.innerHTML = html;
 
     restoreCheckboxes();
     bindFaqToggles();
     bindCardButtons();
 
-    if (currentSection.startsWith('learning-') && level) {
-        document.querySelectorAll('.level-content').forEach(el => {
-            el.style.display = 'none';
-            if (el.dataset.level === level) {
-                el.style.display = 'block';
-            }
-        });
-    }
-
     if (currentSection === 'cards' && cardsViewMode === 'all') {
         showAllCards();
     }
 }
 
-function renderSettings() {
-    const savedFont = localStorage.getItem('ct_font') || 'poppins';
-    const savedTheme = localStorage.getItem('ct_theme') || 'light';
-    const fontNames = { poppins: 'Poppins', monospace: 'Monospace', inter: 'Inter' };
-    
-    return `
-        <div class="section active">
-            <div class="section-header">
-                <h1>⚙️ Settings</h1>
-                <p>Настройки интерфейса и внешнего вида</p>
-            </div>
-            
-            <div class="card">
-                <h3>🎨 Тема</h3>
-                <p style="color:var(--text-black700);font-size:14px;margin-bottom:16px;">Выберите светлую или тёмную тему</p>
-                
-                <div class="theme-switcher" style="display:flex;gap:12px;flex-wrap:wrap;">
-                    <button class="theme-option ${savedTheme === 'light' ? 'active' : ''}" data-theme="light" style="
-                        padding:12px 24px;
-                        border:2px solid ${savedTheme === 'light' ? 'var(--skin-color)' : 'var(--bg-black50)'};
-                        border-radius:10px;
-                        background:${savedTheme === 'light' ? 'var(--bg-black50)' : 'var(--bg-black100)'};
-                        color:var(--text-black900);
-                        cursor:pointer;
-                        font-family:'Poppins',sans-serif;
-                        font-size:14px;
-                        font-weight:500;
-                        transition:all 0.3s ease;
-                    ">
-                        ☀️ Светлая
-                    </button>
-                    
-                    <button class="theme-option ${savedTheme === 'dark' ? 'active' : ''}" data-theme="dark" style="
-                        padding:12px 24px;
-                        border:2px solid ${savedTheme === 'dark' ? 'var(--skin-color)' : 'var(--bg-black50)'};
-                        border-radius:10px;
-                        background:${savedTheme === 'dark' ? 'var(--bg-black50)' : 'var(--bg-black100)'};
-                        color:var(--text-black900);
-                        cursor:pointer;
-                        font-family:'Poppins',sans-serif;
-                        font-size:14px;
-                        font-weight:500;
-                        transition:all 0.3s ease;
-                    ">
-                        🌙 Тёмная
-                    </button>
-                </div>
-                
-                <div style="margin-top:16px;padding:12px 16px;background:var(--bg-black50);border-radius:8px;font-size:13px;color:var(--text-black700);">
-                    <strong>Текущая тема:</strong> <span id="currentThemeDisplay" style="font-weight:600;color:var(--text-black900);">${savedTheme === 'light' ? 'Светлая' : 'Тёмная'}</span>
-                    <span style="display:inline-block;margin-left:12px;padding:2px 12px;background:var(--skin-color);color:#fff;border-radius:12px;font-size:11px;font-weight:600;">активна</span>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3>🔤 Шрифт интерфейса</h3>
-                <p style="color:var(--text-black700);font-size:14px;margin-bottom:16px;">Выберите основной шрифт для всего приложения</p>
-                
-                <div class="font-switcher" style="display:flex;gap:12px;flex-wrap:wrap;">
-                    <button class="font-option ${savedFont === 'poppins' ? 'active' : ''}" data-font="poppins" style="
-                        padding:12px 24px;
-                        border:2px solid ${savedFont === 'poppins' ? 'var(--skin-color)' : 'var(--bg-black50)'};
-                        border-radius:10px;
-                        background:${savedFont === 'poppins' ? 'var(--bg-black50)' : 'var(--bg-black100)'};
-                        color:var(--text-black900);
-                        cursor:pointer;
-                        font-family:'Poppins',sans-serif;
-                        font-size:14px;
-                        font-weight:500;
-                        transition:all 0.3s ease;
-                    ">
-                        Poppins (по умолчанию)
-                    </button>
-                    
-                    <button class="font-option ${savedFont === 'monospace' ? 'active' : ''}" data-font="monospace" style="
-                        padding:12px 24px;
-                        border:2px solid ${savedFont === 'monospace' ? 'var(--skin-color)' : 'var(--bg-black50)'};
-                        border-radius:10px;
-                        background:${savedFont === 'monospace' ? 'var(--bg-black50)' : 'var(--bg-black100)'};
-                        color:var(--text-black900);
-                        cursor:pointer;
-                        font-family:'Courier New',monospace;
-                        font-size:14px;
-                        font-weight:500;
-                        transition:all 0.3s ease;
-                    ">
-                        Monospace
-                    </button>
-                    
-                    <button class="font-option ${savedFont === 'inter' ? 'active' : ''}" data-font="inter" style="
-                        padding:12px 24px;
-                        border:2px solid ${savedFont === 'inter' ? 'var(--skin-color)' : 'var(--bg-black50)'};
-                        border-radius:10px;
-                        background:${savedFont === 'inter' ? 'var(--bg-black50)' : 'var(--bg-black100)'};
-                        color:var(--text-black900);
-                        cursor:pointer;
-                        font-family:'Inter',sans-serif;
-                        font-size:14px;
-                        font-weight:500;
-                        transition:all 0.3s ease;
-                    ">
-                        Inter
-                    </button>
-                </div>
-                
-                <div style="margin-top:16px;padding:12px 16px;background:var(--bg-black50);border-radius:8px;font-size:13px;color:var(--text-black700);">
-                    <strong>Текущий шрифт:</strong> <span id="currentFontDisplay" style="font-weight:600;color:var(--text-black900);">${fontNames[savedFont] || 'Poppins'}</span>
-                    <span style="display:inline-block;margin-left:12px;padding:2px 12px;background:var(--skin-color);color:#fff;border-radius:12px;font-size:11px;font-weight:600;">активен</span>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3>💾 Хранилище</h3>
-                <div style="display:flex;gap:12px;flex-wrap:wrap;">
-                    <button onclick="localStorage.clear();location.reload();" style="
-                        padding:10px 24px;
-                        background:#f85149;
-                        color:#fff;
-                        border:none;
-                        border-radius:8px;
-                        cursor:pointer;
-                        font-family:'Poppins',sans-serif;
-                        font-size:14px;
-                        font-weight:500;
-                        transition:all 0.3s ease;
-                    ">
-                        🗑️ Очистить все данные
-                    </button>
-                    <button onclick="showStorageInfo()" style="
-                        padding:10px 24px;
-                        background:var(--bg-black100);
-                        border:1px solid var(--bg-black50);
-                        border-radius:8px;
-                        color:var(--text-black900);
-                        cursor:pointer;
-                        font-family:'Poppins',sans-serif;
-                        font-size:14px;
-                        font-weight:500;
-                        transition:all 0.3s ease;
-                    ">
-                        ℹ️ Информация о хранилище
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
-}
+// =============================================
+// LEARNING: чекбоксы, toggle, клики по тредам
+// =============================================
 
-function showStorageInfo() {
-    let total = 0;
-    let count = 0;
-    let items = [];
-    
-    for (let key in localStorage) {
-        if (localStorage.hasOwnProperty(key)) {
-            const value = localStorage.getItem(key);
-            const size = new Blob([value]).size;
-            total += size;
-            count++;
-            if (count <= 10) {
-                items.push(`${key}: ${size} bytes`);
-            }
+// Восстановление чекбоксов тем в learning-секциях
+function restoreLearningCheckboxes() {
+    document.querySelectorAll('input[type="checkbox"][data-ct-id^="learning_"]').forEach(cb => {
+        const key = cb.dataset.ctId;
+        const saved = getCheckbox(key);
+        if (saved !== null) {
+            cb.checked = saved;
+            // Обновляем состояние в данных
+            syncTopicCompletedFromCheckbox(key, saved);
         }
-    }
-    
-    const totalKB = (total / 1024).toFixed(2);
-    alert(`📊 Информация о хранилище\n\nВсего ключей: ${count}\nОбщий размер: ${totalKB} KB\n\nПоследние 10 записей:\n${items.join('\n')}`);
-}
-
-function applyThemeFromStorage() {
-    const theme = localStorage.getItem('ct_theme') || 'light';
-    applyTheme(theme);
-}
-
-function applyTheme(theme) {
-    if (theme === 'dark') {
-        document.body.classList.add('dark');
-    } else {
-        document.body.classList.remove('dark');
-    }
-}
-
-function applyFontFromStorage() {
-    const font = localStorage.getItem('ct_font') || 'poppins';
-    applyFont(font);
-}
-
-function applyFont(font) {
-    document.documentElement.style.fontFamily = '';
-    if (font === 'poppins') {
-        document.documentElement.style.fontFamily = "'Poppins', sans-serif";
-    } else if (font === 'monospace') {
-        document.documentElement.style.fontFamily = "'Courier New', 'Consolas', monospace";
-    } else if (font === 'inter') {
-        document.documentElement.style.fontFamily = "'Inter', 'Segoe UI', sans-serif";
-    }
-}
-
-function bindSettingsEvents() {
-    document.querySelectorAll('.theme-option').forEach(btn => {
-        btn.removeEventListener('click', handleThemeClick);
-        btn.addEventListener('click', handleThemeClick);
-    });
-    
-    document.querySelectorAll('.font-option').forEach(btn => {
-        btn.removeEventListener('click', handleFontClick);
-        btn.addEventListener('click', handleFontClick);
-    });
-}
-
-function handleThemeClick(e) {
-    const btn = e.currentTarget;
-    const theme = btn.dataset.theme;
-    applyTheme(theme);
-    localStorage.setItem('ct_theme', theme);
-    
-    document.querySelectorAll('.theme-option').forEach(b => {
-        b.style.borderColor = 'var(--bg-black50)';
-        b.style.background = 'var(--bg-black100)';
-        b.classList.remove('active');
-        if (b.dataset.theme === theme) {
-            b.style.borderColor = 'var(--skin-color)';
-            b.style.background = 'var(--bg-black50)';
-            b.classList.add('active');
-        }
-    });
-    
-    const display = document.getElementById('currentThemeDisplay');
-    if (display) {
-        const names = { light: 'Светлая', dark: 'Тёмная' };
-        display.textContent = names[theme] || theme;
-        const badge = display.nextElementSibling;
-        if (badge) badge.textContent = 'активна';
-    }
-}
-
-function handleFontClick(e) {
-    const btn = e.currentTarget;
-    const font = btn.dataset.font;
-    applyFont(font);
-    localStorage.setItem('ct_font', font);
-    
-    document.querySelectorAll('.font-option').forEach(b => {
-        b.style.borderColor = 'var(--bg-black50)';
-        b.style.background = 'var(--bg-black100)';
-        b.classList.remove('active');
-        if (b.dataset.font === font) {
-            b.style.borderColor = 'var(--skin-color)';
-            b.style.background = 'var(--bg-black50)';
-            b.classList.add('active');
-        }
-    });
-    
-    const display = document.getElementById('currentFontDisplay');
-    if (display) {
-        const names = { poppins: 'Poppins', monospace: 'Monospace', inter: 'Inter' };
-        display.textContent = names[font] || font;
-        const badge = display.nextElementSibling;
-        if (badge) badge.textContent = 'активен';
-    }
-}
-
-function restoreCheckboxes() {
-    document.querySelectorAll('input[type="checkbox"][data-ct-id]').forEach(cb => {
-        const key = 'ct_' + cb.dataset.ctId;
-        cb.checked = localStorage.getItem(key) === 'true';
         cb.addEventListener('change', (e) => {
-            localStorage.setItem(key, e.target.checked);
+            saveCheckbox(key, e.target.checked);
         });
     });
 }
 
+// Синхронизирует topic.completed в window.LEARNING_THREADS
+// Ключ имеет вид: learning_{level}_{threadId}_{topicId}
+function syncTopicCompletedFromCheckbox(key, completed) {
+    if (!window.LEARNING_THREADS) return;
+    const parts = key.split('_');
+    // parts[0] = 'learning', parts[1] = level, parts[2] = threadId, parts[3] = topicId
+    if (parts.length < 4) return;
+    const level = parts[1];
+    const threadId = parts[2];
+    const topicId = parts[3];
+    
+    const thread = window.LEARNING_THREADS[level] && window.LEARNING_THREADS[level][threadId];
+    if (!thread || !thread.topics) return;
+    
+    // topicId в данных — число или строка, приводим к строке для сравнения
+    const topic = thread.topics.find(t => String(t.id) === String(topicId));
+    if (topic) {
+        topic.completed = completed;
+    }
+}
+
+// Привязка toggle-стрелок и кликов по темам
+function bindLearningToggles() {
+    // toggleTopic уже глобальная функция из template.js,
+    // но на всякий случай подстрахуемся, если onclick не сработал
+    document.querySelectorAll('.learning-card').forEach(card => {
+        // Клик по заголовку — toggle
+        const header = card.querySelector('div[onclick]');
+        if (header && typeof window.toggleTopic !== 'function') {
+            header.addEventListener('click', function() {
+                const content = card.querySelector('.topic-content');
+                const arrow = card.querySelector('.toggle-arrow');
+                if (!content) return;
+                if (content.style.display === 'none' || content.style.display === '') {
+                    content.style.display = 'block';
+                    if (arrow) arrow.style.transform = 'rotate(180deg)';
+                } else {
+                    content.style.display = 'none';
+                    if (arrow) arrow.style.transform = 'rotate(0deg)';
+                }
+            });
+        }
+    });
+}
+
+// Привязка кликов по карточкам тредов и кнопке "Назад"
+function bindLearningThreadCards() {
+    // Клик по карточке треда
+    document.querySelectorAll('.thread-card').forEach(card => {
+        card.addEventListener('click', function() {
+            const threadId = this.dataset.threadId;
+            const level = currentLearningLevel;
+            if (typeof setLearningState === 'function') {
+                setLearningState(level, { threadId });
+            }
+            renderContent();
+        });
+        
+        // Hover-эффект
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.boxShadow = 'none';
+            this.style.transform = 'translateY(0)';
+        });
+    });
+    
+    // Кнопка "Назад к тредам"
+    const backBtn = document.querySelector('.back-to-threads-btn');
+    if (backBtn) {
+        backBtn.addEventListener('click', function() {
+            const level = this.dataset.level || currentLearningLevel;
+            if (typeof setLearningState === 'function') {
+                setLearningState(level, { threadId: null });
+            }
+            renderContent();
+        });
+        
+        backBtn.addEventListener('mouseenter', function() {
+            this.style.borderColor = 'var(--skin-color)';
+            this.style.color = 'var(--skin-color)';
+        });
+        backBtn.addEventListener('mouseleave', function() {
+            this.style.borderColor = 'var(--bg-black50)';
+            this.style.color = 'var(--text-black700)';
+        });
+    }
+}
+
+// =============================================
+// CHECKBOXES (общие)
+// =============================================
+function restoreCheckboxes() {
+    document.querySelectorAll('input[type="checkbox"][data-ct-id]').forEach(cb => {
+        const key = cb.dataset.ctId;
+        const saved = getCheckbox(key);
+        if (saved !== null) {
+            cb.checked = saved;
+        }
+        cb.addEventListener('change', (e) => {
+            saveCheckbox(key, e.target.checked);
+        });
+    });
+}
+
+// =============================================
+// FAQ
+// =============================================
 function bindFaqToggles() {
     document.querySelectorAll('.faq-item').forEach(item => {
         item.addEventListener('click', function() {
@@ -403,6 +288,9 @@ function bindFaqToggles() {
     });
 }
 
+// =============================================
+// CARDS: показать все
+// =============================================
 function showAllCards() {
     const cards = window._cardsData || [];
     if (cards.length === 0) return;
@@ -431,17 +319,9 @@ function showAllCards() {
         margin: 20px 0;
     `;
 
-    cards.forEach((card, index) => {
+    cards.forEach((card) => {
         const cardEl = document.createElement('div');
         cardEl.className = 'card-item-all';
-        cardEl.style.cssText = `
-            background: var(--bg-black100);
-            border: 1px solid var(--bg-black50);
-            border-radius: 8px;
-            padding: 16px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        `;
         cardEl.innerHTML = `
             <div style="font-weight:600;font-size:14px;color:var(--text-black900);margin-bottom:8px;">${card.question}</div>
             <div style="font-size:13px;color:var(--text-black700);display:none;" class="card-answer-all">${card.answer}</div>
@@ -478,20 +358,6 @@ function showAllCards() {
         const backButton = document.createElement('button');
         backButton.className = 'back-to-cards-btn';
         backButton.textContent = '← Назад к карточкам';
-        backButton.style.cssText = `
-            padding: 10px 28px;
-            background: var(--bg-black100);
-            border: 1px solid var(--bg-black50);
-            border-radius: 25px;
-            font-size: 14px;
-            font-weight: 500;
-            font-family: 'Poppins', sans-serif;
-            color: var(--text-black900);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: block;
-            margin: 20px auto 0;
-        `;
         backButton.addEventListener('mouseenter', function() {
             this.style.borderColor = 'var(--skin-color)';
             this.style.background = 'var(--skin-color)';
@@ -515,6 +381,9 @@ function showAllCards() {
     }
 }
 
+// =============================================
+// CARDS: кнопки
+// =============================================
 function bindCardButtons() {
     const revealBtn = document.querySelector('.card-reveal-btn');
     const nextBtn = document.getElementById('next-card-btn');
@@ -559,31 +428,17 @@ function bindCardButtons() {
     }
 }
 
-document.addEventListener('keydown', (e) => {
-    if (!e.ctrlKey) return;
-
-    const map = {
-        '1': 'overview',
-        '2': 'resume',
-        '3': 'learning-base',
-        '4': 'cards',
-        '5': 'materials',
-        '6': 'prompts',
-        '7': 'settings'
-    };
-
-    if (map[e.key]) {
-        e.preventDefault();
-        if (currentStack || map[e.key] === 'settings') {
-            switchSection(map[e.key]);
-        }
-    }
-});
-
+// =============================================
+// INITIALIZATION
+// =============================================
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('stackSelect').addEventListener('change', function() {
-        switchStack(this.value);
-    });
+    // navigation
+    const select = document.getElementById('stackSelect');
+    if (select) {
+        select.addEventListener('change', function() {
+            switchStack(this.value);
+        });
+    }
 
     document.querySelectorAll('.nav-item').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -594,30 +449,105 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    applyThemeFromStorage();
     applyFontFromStorage();
 
-    const savedStack = localStorage.getItem('ct_stack');
+    // restore stack
+    const savedStack = getStoredStack();
     if (savedStack && STACKS[savedStack]) {
         document.getElementById('stackSelect').value = savedStack;
         currentStack = savedStack;
-        const data = STACKS[savedStack];
-        document.querySelector('.logo').textContent = data.meta.icon + ' ' + data.meta.title;
-        
-        const savedSection = localStorage.getItem('ct_section');
-        if (savedSection) {
-            switchSection(savedSection);
-        } else {
-            switchSection('overview');
-        }
+
+        const savedSection = getStoredSection();
+        switchSection(savedSection || 'overview');
     } else {
-        if (Object.keys(STACKS).length === 0) {
+        // check if there are any loaded stacks
+        const stackKeys = Object.keys(STACKS);
+        if (stackKeys.length > 0) {
+            // activate the first stack
+            const firstStack = stackKeys[0];
+            document.getElementById('stackSelect').value = firstStack;
+            switchStack(firstStack);
+        } else {
             document.getElementById('mainContent').innerHTML = `
                 <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:18px;flex-direction:column;gap:16px;">
                     <p>📦 No stacks loaded</p>
-                    <p style="font-size:14px;">Connect stack files (seo.js, flutter.js, etc.)</p>
+                    <p style="font-size:14px;">Connect stack files (php.js, english.js, etc.)</p>
                 </div>
             `;
         }
     }
+
+    initTheme();
+    setupThemeToggles();
 });
+
+// =============================================
+// THEME MANAGEMENT
+// =============================================
+const STORAGE_THEME = 'ct_theme';
+
+function setTheme(theme) {
+    document.body.classList.toggle('dark', theme === 'dark');
+    saveTheme(theme);
+    syncAllToggles(theme);
+}
+
+function syncAllToggles(theme) {
+    const isDark = theme === 'dark';
+    document.querySelectorAll('.theme-toggle, .settings-theme-toggle, [data-theme-toggle]').forEach(toggle => {
+        if (toggle.type === 'checkbox' || toggle.classList.contains('toggle-input')) {
+            toggle.checked = isDark;
+        } else {
+            toggle.textContent = isDark ? '☀️' : '🌙';
+        }
+    });
+}
+
+function initTheme() {
+    const savedTheme = getStoredTheme();
+    setTheme(savedTheme);
+}
+
+function setupThemeToggles() {
+    const themeToggleBtn = document.getElementById('themeToggle');
+    if (themeToggleBtn) {
+        const newBtn = themeToggleBtn.cloneNode(true);
+        themeToggleBtn.parentNode.replaceChild(newBtn, themeToggleBtn);
+        newBtn.addEventListener('click', function() {
+            const isDark = document.body.classList.contains('dark');
+            setTheme(isDark ? 'light' : 'dark');
+        });
+    }
+    
+    document.querySelectorAll('.settings-theme-toggle, .theme-toggle-settings').forEach(toggle => {
+        toggle.addEventListener('change', function() {
+            const newTheme = this.checked ? 'dark' : 'light';
+            setTheme(newTheme);
+        });
+    });
+    
+    document.querySelectorAll('[data-theme-toggle]').forEach(toggle => {
+        toggle.addEventListener('click', function() {
+            const isDark = document.body.classList.contains('dark');
+            setTheme(isDark ? 'light' : 'dark');
+        });
+    });
+}
+
+// =============================================
+// SYNC BETWEEN TABS
+// =============================================
+window.addEventListener('storage', function(e) {
+    if (e.key === STORAGE_THEME) {
+        const newTheme = e.newValue || 'light';
+        document.body.classList.toggle('dark', newTheme === 'dark');
+        syncAllToggles(newTheme);
+    }
+});
+
+// =============================================
+// EXPORT GLOBAL FUNCTIONS
+// =============================================
+window.setTheme = setTheme;
+window.getStoredTheme = getStoredTheme;
+window.clearAllStorage = clearAllStorage;

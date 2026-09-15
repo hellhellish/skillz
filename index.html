@@ -3,83 +3,39 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>🌳 Career Tree</title>
+    <title>Career Tree</title>
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-    <!-- SIDEBAR -->
     <aside class="sidebar">
-        <div class="logo">🌳 Career Tree</div>
-
-        <!-- STACK SELECTION -->
         <div class="stack-selector">
-            <label for="stackSelect">Stack / Profession</label>
             <select id="stackSelect">
                 <option value="">-- Select a stack --</option>
             </select>
         </div>
-
-        <!-- NAVIGATION MENU -->
         <nav class="nav-menu">
             <div class="nav-group">
-                <div class="nav-group-title">Profile</div>
-                <button class="nav-item active" data-section="overview">
-                    <span class="icon">📊</span> Overview
-                </button>
-                <button class="nav-item" data-section="resume">
-                    <span class="icon">📄</span> Resume
-                </button>
+                <button class="nav-item" data-section="resume">Resume</button>
             </div>
-
+            <hr>
             <div class="nav-group">
-                <div class="nav-group-title">Learning</div>
-                <button class="nav-item" data-section="learning-base">
-                    <span class="icon">📖</span> Base
-                </button>
-                <button class="nav-item" data-section="learning-light">
-                    <span class="icon">📖</span> Light
-                </button>
-                <button class="nav-item" data-section="learning-medium">
-                    <span class="icon">📖</span> Medium
-                </button>
-                <button class="nav-item" data-section="learning-hard">
-                    <span class="icon">📖</span> Hard
-                </button>
-                <button class="nav-item" data-section="learning-exam">
-                    <span class="icon">📖</span> Exam
-                </button>
+                <button class="nav-item" data-section="learning-base">Base</button>
+                <button class="nav-item" data-section="learning-light">Light</button>
+                <button class="nav-item" data-section="learning-medium">Medium</button>
+                <button class="nav-item" data-section="learning-hard">Hard</button>
+                <button class="nav-item" data-section="learning-exam">Exam</button>
             </div>
-
+            <hr>
             <div class="nav-group">
-                <div class="nav-group-title">Knowledge Base</div>
-                <button class="nav-item" data-section="cards">
-                    <span class="icon">🃏</span> Cards
-                </button>
-                <button class="nav-item" data-section="materials">
-                    <span class="icon">📚</span> Materials & Knowledge
-                </button>
+                <button class="nav-item" data-section="cards">Cards</button>
+                <button class="nav-item" data-section="materials">Materials & Knowledge</button>
+                <button class="nav-item" data-section="prompts">Prompts</button>
+                <button class="nav-item" data-section="settings">Settings</button>
             </div>
-
-            <div class="nav-group">
-                <div class="nav-group-title">Prompts</div>
-                <button class="nav-item" data-section="prompts">
-                    <span class="icon">⚡</span> Prompts
-                </button>
-            </div>
-
-            <div class="nav-group">
-                <div class="nav-group-title">System</div>
-                <button class="nav-item" data-section="settings">
-                    <span class="icon">⚙️</span> Settings
-                </button>
-            </div>
-
-
         </nav>
     </aside>
 
-    <!-- MAIN CONTENT -->
     <main class="main" id="mainContent">
         <!-- Content is rendered here -->
     </main>
@@ -90,30 +46,75 @@
         </svg>
     </button>
 
+<script src="storage.js"></script>
+<script src="resume.js"></script>
+<script src="settings.js"></script>
+<script src="script.js"></script>
+
+<!-- core templates (root) -->
+<script src="cards.js"></script>
+<script src="materials.js"></script>
+<script src="prompts.js"></script>
+
+<!-- learning template -->
+<script src="skills/php/learning/template.js"></script>
+
+<!-- learning: base threads -->
+<script src="skills/php/learning/base/thread-01-general.js"></script>
+<script src="skills/php/learning/base/thread-02-protocols.js"></script>
+<script src="skills/php/learning/base/thread-03-security.js"></script>
+<script src="skills/php/learning/base/thread-04-oop.js"></script>
+<script src="skills/php/learning/base/thread-05-principles.js"></script>
+<script src="skills/php/learning/base/thread-06-patterns.js"></script>
+<script src="skills/php/learning/base/thread-07-architecture.js"></script>
+<script src="skills/php/learning/base/thread-08-php-language.js"></script>
+<script src="skills/php/learning/base/thread-09-php-frameworks.js"></script>
+<script src="skills/php/learning/base/thread-10-symfony.js"></script>
+<script src="skills/php/learning/base/thread-11-laravel.js"></script>
+<script src="skills/php/learning/base/thread-12-testing.js"></script>
+<script src="skills/php/learning/base/thread-13-infrastructure.js"></script>
+<script src="skills/php/learning/base/thread-14-http.js"></script>
+<script src="skills/php/learning/base/thread-15-cache.js"></script>
+<script src="skills/php/learning/base/thread-16-balancing.js"></script>
+<script src="skills/php/learning/base/thread-17-database.js"></script>
+<script src="skills/php/learning/base/thread-18-async.js"></script>
+<script src="skills/php/learning/base/thread-19-tools.js"></script>
+<script src="skills/php/learning/base/thread-20-algorithms.js"></script>
+
+<!-- learning data -->
+<script src="skills/php/learning/light-data.js"></script>
+<script src="skills/php/learning/medium-data.js"></script>
+<script src="skills/php/learning/hard-data.js"></script>
+<script src="skills/php/learning/exam-data.js"></script>
+
+<!-- stack data -->
+<script src="skills/php/cards-data.js"></script>
+<script src="skills/php/materials-data.js"></script>
+<script src="skills/php/prompts-data.js"></script>
+
+<!-- stack registration (must be last) -->
+<script src="skills/php/php.js"></script>
 
 
-     <script src="script.js"></script>
+<!-- learning template -->
+<script src="skills/seo/learning/template.js"></script>
 
-    <!-- LOAD STACKS - PHP -->
-    <script src="skills/php/overview.js"></script>
-    <script src="skills/php/resume.js"></script>
-    <script src="skills/php/learning.js"></script>
-    <script src="skills/php/cards.js"></script>
-    <script src="skills/php/materials.js"></script>
-    <script src="skills/php/prompts-data.js"></script>
-    <script src="skills/php/prompts.js"></script>
-    <script src="skills/php/php.js"></script>
+<!-- learning: base threads -->
+<script src="skills/seo/learning/base/thread-01-general.js"></script>
 
+<!-- learning data -->
+<script src="skills/seo/learning/light-data.js"></script>
+<script src="skills/seo/learning/medium-data.js"></script>
+<script src="skills/seo/learning/hard-data.js"></script>
+<script src="skills/seo/learning/exam-data.js"></script>
 
-    <!-- LOAD STACKS - English -->
-    <script src="skills/english/overview.js"></script>
-    <script src="skills/english/resume.js"></script>
-    <script src="skills/english/learning.js"></script>
-    <script src="skills/english/cards.js"></script>
-    <script src="skills/english/materials.js"></script>
-    <script src="skills/english/prompts-data.js"></script>
-    <script src="skills/english/prompts.js"></script>
-    <script src="skills/english/english.js"></script>
+<!-- stack data -->
+<script src="skills/seo/cards-data.js"></script>
+<script src="skills/seo/materials-data.js"></script>
+<script src="skills/seo/prompts-data.js"></script>
+
+<!-- stack registration (must be last) -->
+<script src="skills/seo/seo.js"></script>
 
 </body>
 </html>

@@ -1,6 +1,6 @@
 // skills/php/prompts-data.js
 
-window.PHP_PROMPTS_DATA = [
+window.SEO_PROMPTS_DATA = [
     {
         title: "Comment Policy",
         text: "When modifying code, enforce these rules for all code comments. Language: English only. Format: `//` prefix, lowercase text, no exceptions. Placement: on a separate line directly above the code it describes. Never inline, never trailing. Scope: add a comment only when the code's intent is non-obvious (complex logic, edge cases, workarounds, non-trivial decisions). Cleanup: if a comment is not needed, delete it. Do not add redundant, obvious, or restating-the-code comments. On edit: update or remove existing comments that no longer match the code. Do not leave stale comments."

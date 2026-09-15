@@ -1,11 +1,11 @@
-// skills/php/php.js
+// skills/seo/seo.js
 
-const phpStack = {
+const seoStack = {
     meta: {
         icon: '🐘',
-        title: 'PHP',
-        subtitle: 'Senior Developer',
-        description: 'PHP 8+ / Laravel / Symfony / API / Microservices'
+        title: 'SEO',
+        subtitle: 'Senior',
+        description: 'SEO'
     },
     stats: {
         skills: { done: 20, total: 45 },
@@ -14,16 +14,16 @@ const phpStack = {
     },
 
     // data
-    cards:     window.PHP_CARDS_DATA,
-    materials: window.PHP_MATERIALS_DATA,
-    prompts:   window.PHP_PROMPTS_DATA,
+    cards:     window.SEO_CARDS_DATA,
+    materials: window.SEO_MATERIALS_DATA,
+    prompts:   window.SEO_PROMPTS_DATA,
 
     // sections: neutral renderers from core templates
     sections: {}
 };
 
 // ---------- SECTION REGISTRATION ----------
-function registerPhpSections() {
+function registerSeoSections() {
     const registrars = {
         cards:     window.renderCardsSection,
         materials: window.renderMaterialsSection,
@@ -34,7 +34,7 @@ function registerPhpSections() {
 
     for (const [section, fn] of Object.entries(registrars)) {
         if (typeof fn === 'function') {
-            phpStack.sections[section] = fn;
+            seoStack.sections[section] = fn;
             registered++;
         } else {
             console.warn(`⚠️ Renderer for "${section}" is not loaded`);
@@ -47,7 +47,7 @@ function registerPhpSections() {
     levels.forEach(level => {
         const sectionKey = 'learning-' + level;
 
-        phpStack.sections[sectionKey] = function(d, lvl) {
+        seoStack.sections[sectionKey] = function(d, lvl) {
             if (typeof window.renderLearning !== 'function') {
                 return `
                     <div class="section active">
@@ -95,31 +95,31 @@ function setLearningState(level, state) {
 }
 
 // ---------- STACK REGISTRATION ----------
-function registerPhpStack() {
-    if (phpStack._registered) {
+function registerSeoStack() {
+    if (seoStack._registered) {
         return;
     }
 
-    const registered = registerPhpSections();
+    const registered = registerSeoSections();
 
     if (registered === 0) {
         console.error('❌ Не зарегистрировано ни одной секции!');
-        phpStack._registered = false;
+        seoStack._registered = false;
         return;
     }
 
     if (typeof registerStack === 'function') {
-        registerStack('php', phpStack);
-        phpStack._registered = true;
-        console.log(`✅ PHP stack registered (${registered} sections)`);
+        registerStack('seo', seoStack);
+        seoStack._registered = true;
+        console.log(`✅ SEO stack registered (${registered} sections)`);
     } else {
         console.error('❌ registerStack не определена!');
-        phpStack._registered = false;
+        seoStack._registered = false;
     }
 }
 
 // ---------- INITIALIZATION ----------
-function initPhpStack() {
+function initSeoStack() {
     const waitForTemplate = () => {
         return new Promise((resolve) => {
             if (typeof window.renderLearning === 'function') {
@@ -142,20 +142,20 @@ function initPhpStack() {
 
     waitForTemplate().then(() => {
         if (typeof registerStack === 'function') {
-            registerPhpStack();
+            registerSeoStack();
         } else {
             document.addEventListener('stackSystemReady', function onReady() {
                 document.removeEventListener('stackSystemReady', onReady);
                 if (typeof registerStack === 'function') {
-                    registerPhpStack();
+                    registerSeoStack();
                 } else {
                     console.error('❌ registerStack не найдена после события!');
                 }
             });
 
             setTimeout(() => {
-                if (!phpStack._registered && typeof registerStack === 'function') {
-                    registerPhpStack();
+                if (!seoStack._registered && typeof registerStack === 'function') {
+                    registerSeoStack();
                 }
             }, 3000);
         }
@@ -163,9 +163,9 @@ function initPhpStack() {
 }
 
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initPhpStack);
+    document.addEventListener('DOMContentLoaded', initSeoStack);
 } else {
-    initPhpStack();
+    initSeoStack();
 }
 
 // ---------- EXPORTS ----------
